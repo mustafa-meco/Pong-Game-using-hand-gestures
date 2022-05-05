@@ -20,13 +20,16 @@ detector = HandDetector(detectionCon=0.8, maxHands=2)
 
 # Variables
 ballPos = [100, 100]
-speedX = 10
-speedY = 10
+speedX = 15
+speedY = 15
 gameOver = False
+score = [0, 0]
 
 while True:
     _, img = cap.read()
+
     img = cv2.flip(img, 1)
+    imgRaw = img.copy()
 
     # Find the hand and its landmarks
     hands, img = detector.findHands(img, flipType=False)  # with draw
@@ -50,19 +53,24 @@ while True:
                 if 59 < ballPos[0] < 59 +w1 and y1< ballPos[1] < y1+h1:
                     speedX = -speedX
                     ballPos[0] += 30
+                    score[0] += 1
 
             if hand['type'] == "Right":
                 img = cvzone.overlayPNG(img, imgBat2, (1195, int(y1)))
                 if 1195-50 < ballPos[0] < 1195 and y1< ballPos[1] < y1+h1:
                     speedX = -speedX
                     ballPos[0] -= 30
+                    score[1] += 1
 
     # Game Over
-    if ballPos[0]<40 or ballPos[0] > 1195:
+    if ballPos[0]<40 or ballPos[0] > 1200:
         gameOver = True
 
     if gameOver:
         img = imgGameOver
+        cv2.putText(img, str(score[0]+score[1]).zfill(2), (585,360), cv2.FONT_HERSHEY_COMPLEX,
+                    2.5, (200,0,200), 5)
+
 
     # if game not over move the ball
     else:
@@ -79,9 +87,21 @@ while True:
         # Draw the ball
         img = cvzone.overlayPNG(img, imgBall, ballPos)
 
+        cv2.putText(img, str(score[0]), (300,650), cv2.FONT_HERSHEY_COMPLEX, 3, (255,255,255), 5)
+        cv2.putText(img, str(score[1]), (900,650), cv2.FONT_HERSHEY_COMPLEX, 3, (255,255,255), 5)
+
+    img[580:700, 20:233] = cv2.resize(imgRaw, (213,120))
 
     cv2.imshow("Image", img)
-    cv2.waitKey(1)
+    key = cv2.waitKey(1)
+    if key == ord('r'):
+        ballPos = [100, 100]
+        speedX = 10
+        speedY = 10
+        gameOver = False
+        score = [0, 0]
+        imgGameOver = cv2.imread('Resources/gameOver.png')
+
 
 
 
