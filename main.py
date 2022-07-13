@@ -3,16 +3,7 @@ import cvzone
 from cvzone.HandTrackingModule import HandDetector
 import numpy as np
 
-def displayGif(gif, wind = "Image"):
-    i = 20
-    while True:
-        ret, img = gif.read()
-        if ret:
-            cv2.imshow(wind, img)
-        else:
-            break
-        cv2.waitKey(i)
-        i -= 1
+from utils import *
 
 
 
@@ -86,6 +77,14 @@ while True:
                 if hand['type'] == "Right":
                     img = cvzone.overlayPNG(img, imgBat2, (1195, int(y1)))
                     if 1195-50 < ballPos[0] < 1195 and y1< ballPos[1] < y1+h1:
+                        # if y1+h1-ballPos[1] < h1/3:
+                        #     ballPos[1] += 15
+                        #     speedY = abs(speedY) * 1.1
+                        # if y1 + h1 - ballPos[1] > h1 * 2/3:
+
+                            # speedY = -abs(speedY) * 1.1
+                        # ballPos[1] -= 15
+                        # speedY = -speedY
                         speedX = -speedX
                         ballPos[0] -= 30
                         score[1] += 1
